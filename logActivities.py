@@ -84,6 +84,17 @@ Step 4: Output to a CSV file
 """
 dim_ip_activities_list = [[key] + dim_ip_activities[key] for key in dim_ip_activities.keys()]
 
+"""
+Output to a CSV file
+"""
+dim_ip_activities_list = [[key] + dim_ip_activities[key] for key in dim_ip_activities.keys()]
+
 with open("dim_ip_activities.csv", 'w') as resultFile:
+    writer = csv.DictWriter(resultFile, fieldnames=[
+        "IP",
+        "Pages per Minute",
+        "Pages per Session"])
+    writer.writeheader()
+
     wr = csv.writer(resultFile, dialect='excel')
     wr.writerows(dim_ip_activities_list)
