@@ -38,7 +38,9 @@ for item in AccessLogList:
     # pages first session, last session, pages, last page
     if item[0] not in session_dict.keys():
         session_dict[item[0]] = [[1, 0, item[1], item[1], 1, item[2]]]
-    else:
+
+    # If IP already exist and the request was successful
+    elif item[3] == 200:
         # If within 20 minutes of last session,
         # then update the length of time spent
         if item[1] < session_dict[item[0]][-1][3] + timedelta(minutes=20):
