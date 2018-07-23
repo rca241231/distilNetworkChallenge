@@ -36,29 +36,30 @@ session_dict = {}
 for item in AccessLogList:
     # If we haven't add to the session dict, store session_id as 1, timespent,
     # pages first session, last session, pages, last page
-    if item[0] not in session_dict.keys():
-        session_dict[item[0]] = [[1, 0, item[1], item[1], 1, item[2]]]
+    if item[3] == '200':
+        if item[0] not in session_dict.keys():
+            session_dict[item[0]] = [[1, 0, item[1], item[1], 1, item[2]]]
 
-    # If IP already exist and the request was successful
-    elif item[3] == 200:
-        # If within 20 minutes of last session,
-        # then update the length of time spent
-        if item[1] < session_dict[item[0]][-1][3] + timedelta(minutes=20):
-            # Update the total timespent
-            session_dict[item[0]][-1][1] = (item[1] - session_dict[item[0]][-1][2]).total_seconds() / 60.0
-
-            # Update the last timestamp
-            session_dict[item[0]][-1][3] = item[1]
-
-            # Update the page
-            if item[2] != session_dict[item[0]][-1][5]:
-                session_dict[item[0]][-1][5] = item[2]
-                session_dict[item[0]][-1][4] += 1
-
-        # Count as new session if not within 20 minutes
+        # If IP already exist and the request was successful
         else:
-            # Increment the session id from the last one and update the fields
-            session_dict[item[0]].append([session_dict[item[0]][-1][0] + 1, 0, item[1], item[1], 1, item[2]])
+            # If within 20 minutes of last session,
+            # then update the length of time spent
+            if item[1] < session_dict[item[0]][-1][3] + timedelta(minutes=20):
+                # Update the total timespent
+                session_dict[item[0]][-1][1] = (item[1] - session_dict[item[0]][-1][2]).total_seconds() / 60.0
+
+                # Update the last timestamp
+                session_dict[item[0]][-1][3] = item[1]
+
+                # Update the page
+                if item[2] != session_dict[item[0]][-1][5]:
+                    session_dict[item[0]][-1][5] = item[2]
+                    session_dict[item[0]][-1][4] += 1
+
+            # Count as new session if not within 20 minutes
+            else:
+                # Increment the session id from the last one and update the fields
+                session_dict[item[0]].append([session_dict[item[0]][-1][0] + 1, 0, item[1], item[1], 1, item[2]])
 
 """
 Step 3: Compute the following and store as dim table/dictionary:
